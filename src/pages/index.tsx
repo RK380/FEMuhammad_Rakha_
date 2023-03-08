@@ -2,6 +2,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import Page from '../../components/Page'
+import Button from '../../components/Button'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -57,7 +59,14 @@ export default function Home() {
         </div>
 
         <div className={styles.grid}>
-          
+        {/* className={styles.card} */}
+            <h2 className={inter.className}>
+              Hunt <span>-&gt;</span>
+            </h2>
+            <form>
+              <Page />
+              <Button />
+            </form>
         </div>
       </main>
     </>
