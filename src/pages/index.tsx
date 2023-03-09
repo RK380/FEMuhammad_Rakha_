@@ -5,10 +5,37 @@ import styles from '@/styles/Home.module.css'
 import Page from '../../components/Page'
 import Button from '../../components/Button'
 import ListUser from '../../components/ListUser'
+import { useState } from 'react';
+import { User } from '../../types/User'
+import { SearchRes } from '../../types/SearchRes'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+
+  const [isLoading,setIsLoading] = useState(false);
+  const [cari,setCari] = useState("")
+  const [result,setResult] = useState<SearchRes | null>(null)
+
+  const onSearchSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();
+    if(cari){
+      setIsLoading(true)
+      fetch(`https://api.github.com/search/users?q=${cari}&per_page=20`)
+            .then(res=>res.json())
+            .then(data=>{
+              const user : User[] = data.items
+              const searchRes:SearchRes={
+                search:cari,
+                users:user
+              }
+              setResult(searchRes)
+            }).finally(()=>{
+              setIsLoading(false)
+            })
+    }
+  }
+
   return (
     <>
       <Head>
@@ -59,13 +86,12 @@ export default function Home() {
           </div>
         </div>
         <div className={styles.card}>
-          <form className='flex place-self-center space-x-3'>
-            <Page />
-            <Button type='submit' isLoading={false} />
-            <ListUser />
+          <form className='flex place-self-center space-x-3' onSubmit={onSearchSubmit}>
+            <Page value={cari} onChange={(e)=>setCari(e.target.value)} />
+            <Button type='submit' isLoading={isLoading} />
           </form>
+          {result && <ListUser result={result} />}
         </div>
-
       </main>
     </>
   )
